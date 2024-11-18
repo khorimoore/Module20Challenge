@@ -13,10 +13,11 @@ export default async function cleanDb(
     }
 
     // Get the database instance
-    const db = getDatabase();
+    const db = getDatabase().useDb(process.env.DB_NAME || "techquiz");
 
-    // Check if the collection exists
-    const collections = await db.listCollections({ name: collectionName }).toArray();
+  
+    const collections = await db
+      .listCollections;
 
     if (collections.length > 0) {
       // Drop the collection if it exists
