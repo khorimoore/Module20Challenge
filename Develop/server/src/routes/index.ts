@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 router.use('/api', apiRoutes);
 
 // Serve React front-end in production
-router.use((req: Request, res: Response) => {
+router.use((_req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
 });
 
