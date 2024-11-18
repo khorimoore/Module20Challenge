@@ -1,16 +1,28 @@
-import models from '../models/index.js';
-import db from '../config/connection.js';
+import models from "../models/index.js";
+import { getDatabase } from "../config/connection.js";
 
-export default async (modelName: "Question", collectionName: string) => {
+export default async function cleanDb(modelName: string, collectionName: string): Promise<void> {
   try {
-    let modelExists = await models[modelName].db.db.listCollections({
-      name: collectionName
-    }).toArray()
+    // Ensure the model name exists in the models object
+    const model = models[modelName];
+    if (!model) {
+      throw new Error(`Model "${modelName}" does not exist.`);
+    }
 
-    if (modelExists.length) {
+    // Get the database instance
+    const db = getDatabase();
+
+    // Check if the collection exists
+    const collections = await db.listCollections({ name: collectionName }).toArray();
+
+    if (collections.length > 0) {
+      // Drop the collection if it exists
       await db.dropCollection(collectionName);
+      console.log(`Collection "${collectionName}" has been dropped.`);
+    } else {
+      console.log(`Collection "${collectionName}" does not exist.`);
     }
   } catch (err) {
-    throw err;
+    console.error("Error cleaning database:", err);
   }
 }
